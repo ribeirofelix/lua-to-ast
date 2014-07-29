@@ -90,7 +90,7 @@ SRCS=	\
 all: luadec.so
 
 luadec.so:	$(OBJS)
-	gcc -shared -o $@ $(OBJS)
+	gcc -shared -o $@ $(OBJS) -lm
 
 clean:
 	rm -f $(OBJS) $T

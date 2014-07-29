@@ -1055,13 +1055,13 @@ char* PrintFunction(Function * F)
  * ------------------------------------------------------------------------- 
  */
 
-static char *operators[20] =
+static char *operators[23] =
     { " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ",
-   "+", "-", "*", "/", "^", "-", "not ", ".."
+   " ","+", "-", "*", "/", "%" ,"^", "-", "not ", "#" , ".."
 };
 
-static int priorities[20] =
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 3, 3, 1, 2, 2, 5 };
+static int priorities[23] =
+    { 0, 0, 0, 0, 0, 0,0, 0, 0, 0, 0, 0, 0, 4, 4, 3, 3, 3, 1, 2, 2, 2, 5 };
 
 char *RegisterOrConstant(Function * F, int r)
 {
@@ -1494,16 +1494,20 @@ char* ProcessCode(const Proto * f, int indent)
       case OP_MUL:
       case OP_DIV:
       case OP_POW:
+      case OP_MOD:
          {
             char *bstr, *cstr;
+            //TODO: remove codigo debug
+           // printf("%d\n", o);
             char *oper = operators[o];
+          //  printf("operador: %s\n", oper);
             int prio = priorities[o];
             int bprio = PRIORITY(b);
             int cprio = PRIORITY(c);
             TRY(bstr = RegisterOrConstant(F, b));
             TRY(cstr = RegisterOrConstant(F, c));
             // FIXME: might need to change from <= to < here
-            if ((prio != 1 && bprio <= prio) || (prio == 1 && bstr[0] != '-')) {
+            if ((prio != 1 && bprio < prio) || (prio == 1 && bstr[0] != '-')) {
                StringBuffer_add(str, bstr);
             } else {
                StringBuffer_addPrintf(str, "(%s)", bstr);
@@ -1522,6 +1526,7 @@ char* ProcessCode(const Proto * f, int indent)
          }
       case OP_UNM:
       case OP_NOT:
+      case OP_LEN:
          {
             char *bstr;
             int prio = priorities[o];

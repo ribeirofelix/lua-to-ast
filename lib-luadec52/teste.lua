@@ -1,39 +1,142 @@
 
 local lib = require "luadec"
 
-mlc = require 'metalua.compiler'.new()
-
-function table_print (tt, indent, done)
-  done = done or {}
-  indent = indent or 0
-  if type(tt) == "table" then
-    for key, value in pairs (tt) do
-      io.write(string.rep (" ", indent)) -- indent it
-      if type (value) == "table" and not done [value] then
-        done [value] = true
-        io.write(string.format("[%s] => table\n", tostring (key)));
-        io.write(string.rep (" ", indent+4)) -- indent it
-        io.write("(\n");
-        table_print (value, indent + 7, done)
-        io.write(string.rep (" ", indent+4)) -- indent it
-        io.write(")\n");
-      else
-        io.write(string.format("[%s] => %s\n",
-            tostring (key), tostring(value)))
-      end
-    end
-  else
-    io.write(tt .. "\n")
-  end
+function  wrap( code )
+    return "return " .. code
 end
 
-
-local y = 1
-foo = function (x) return x + x end
-local code = lib.luadec(foo)
-print(code)
-local ast = mlc:src_to_ast([[function a1(x) return x + x end]])
-local a = mlc:ast_to_function(ast)
-print(a(1))
+describe("Binary Expression Tests" , function ()
+  
 
 
+  describe("Arith exp" , function ()
+    
+    it("Bin op + ", function  ()
+       foo = function (x) return x + x end
+       local code = lib.luadec(foo)
+       assert.True( foo(2) == assert(loadstring(wrap(code)))() (2) )
+    end)
+
+    it("Bin op - ", function  ()
+       foo = function (x) return x - x end
+       local code = lib.luadec(foo)
+       assert.True( foo(2) == assert(loadstring(wrap(code)))() (2) )
+    end)
+
+    it("Bin op * ", function  ()
+       foo = function (x) return x * x end
+       local code = lib.luadec(foo)
+       assert.True( foo(2) == assert(loadstring(wrap(code)))() (2) )
+    end)
+
+    it("Bin op / ", function  ()
+       foo = function (x) return x / x end
+       local code = lib.luadec(foo)
+       assert.True( foo(2) == assert(loadstring(wrap(code)))() (2) )
+    end)
+
+    it("Bin op % ", function  ()
+       foo = function (x) return x % x end
+       local code = lib.luadec(foo)
+      assert.True( foo(2) == assert(loadstring(wrap(code)))() (2) )
+    end)
+
+    it("Bin op ^ ", function  ()
+       foo = function (x) return x ^ x end
+       local code = lib.luadec(foo)
+      assert.True( foo(2) == assert(loadstring(wrap(code)))() (2) )
+    end)
+  end)
+
+  describe("Relational exp" , function ()
+      it("Bin op > ", function  ()
+        foo = function (x) return x > x end
+        local code = lib.luadec(foo)
+        assert.True( foo(2) == assert(loadstring(wrap(code)) )() (2) )
+      end)
+      it("Bin op < ", function  ()
+        foo = function (x) return x < x end
+        local code = lib.luadec(foo)
+        assert.True( foo(2) == assert(loadstring(wrap(code)) )() (2) )
+      end)
+      it("Bin op <= ", function  ()
+        foo = function (x) return x <= x end
+        local code = lib.luadec(foo)
+        assert.True( foo(2) == assert(loadstring(wrap(code)) )() (2) )
+      end)
+      it("Bin op >= ", function  ()
+        foo = function (x) return x >= x end
+        local code = lib.luadec(foo)
+        assert.True( foo(2) == assert(loadstring(wrap(code)) )() (2) )
+      end)
+      it("Bin op == ", function  ()
+        foo = function (x) return x == x end
+        local code = lib.luadec(foo)
+        assert.True( foo(2) == assert(loadstring(wrap(code)) )() (2) )
+      end)
+      it("Bin op ~= ", function  ()
+        foo = function (x) return x ~= x end
+        local code = lib.luadec(foo)
+        assert.True( foo(2) == assert(loadstring(wrap(code)) )() (2) )
+      end)
+  end)
+ 
+  describe("Logical exp" , function ()
+      it("Bin op and ", function  ()
+        foo = function (x) return x and x end
+        local code = lib.luadec(foo)
+        print(code)
+        assert.True( foo(2) == assert(loadstring(wrap(code)) )() (2) )
+      end)
+      it("Bin op or ", function  ()
+        foo = function (x) return x or x end
+        local code = lib.luadec(foo)
+       -- print(code)
+
+        assert.True( foo(2) == assert(loadstring(wrap(code)) )() (2) )
+      end)
+  end)
+
+  it("Bin op .. ", function  ()
+     foo = function (x) return x .. x end
+     local code = lib.luadec(foo)
+    assert.True( foo(2) == assert(loadstring(wrap(code)) )() (2) )
+  end)
+end)
+
+describe("Unary Expression Tests", function () 
+   
+  describe("Arith exp" , function ()
+    
+    it("Unary op - ", function  ()
+       foo = function (x) return -x  end
+       local code = lib.luadec(foo)
+       assert.True( foo(2) == assert(loadstring(wrap(code)))() (2) )
+    end)
+  end)
+
+  describe("Logical exp" , function ()
+    it("Bin op not ", function  ()
+      foo = function (x) return not x end
+      local code = lib.luadec(foo)
+      assert.True( foo(2) == assert(loadstring(wrap(code)) )() (2) )
+    end)
+  end)
+
+  it("Unary op # ", function  ()
+    foo = function (x) return #x end
+    local code = lib.luadec(foo)
+    assert.True( foo("lol") == assert(loadstring(wrap(code)) )() ("lol") )
+  end)
+
+
+-- describe("Table Constructors",function ()
+--   it("Simple return ", function  ()
+--     foo = function (x) return { a = x } end
+--     local code = lib.luadec(foo)
+    
+--     assert.True( foo(2).a == assert(loadstring(wrap(code)))()(2).a )
+--   end)
+-- end)
+
+end)

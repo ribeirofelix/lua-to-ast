@@ -147,7 +147,7 @@ StringBuffer* PrintLogicItem(StringBuffer* str, LogicExp* exp, int inv, int rev)
 StringBuffer* PrintLogicExp(StringBuffer* str, int dest, LogicExp* exp, int inv_, int rev_);
 void AddStatement(Function * F, StringBuffer * str);
 void ShowState(Function * F);
-
+char* ProcessCode(const Proto * f, int indent);
 
 
 #endif
