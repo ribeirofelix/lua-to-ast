@@ -53,7 +53,12 @@ function var2str (var)
   local tag = var.tag
   local str 
   if tag == "Id" then
-    str =  name2str(var[1])
+    if var[2] then
+      -- this is an annotated upvalue.
+      str =  name2str(var[1]).."()"
+    else
+      str =  name2str(var[1])
+    end
   elseif tag == "Index" then
  
     str = exp2str(var[1]) 
@@ -200,7 +205,7 @@ function block2str (block)
   return table.concat(l, "\n") 
 end
 
-function trans.transalte (t)
+function trans.translate (t)
   assert(type(t) == "table")
   return block2str(t)
 end
