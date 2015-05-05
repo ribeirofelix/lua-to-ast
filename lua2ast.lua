@@ -100,7 +100,7 @@ end
 function lua2ast.compile( ast )
   assert(type(ast) == "table")
   local upvalues = find_upvalues(ast)
-  local out = { "do\n" }
+  local out = {}
   for var, _ in pairs(upvalues) do
     out[#out+1] = " local "..var.."\n"
   end
@@ -110,7 +110,6 @@ function lua2ast.compile( ast )
   }
   local astcode = comp.translate(ast)
   out[#out+1] = astcode
-  out[#out+1] = "\nend\n"
   local code = table.concat(out)
   local func = loadstring(code)()
   join_upvalues(func, upvalues)
